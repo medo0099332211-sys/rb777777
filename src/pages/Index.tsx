@@ -16,20 +16,26 @@ export default function Index({ userName, onLogout }: IndexProps) {
   const { state, adsToday, canWatchAd, remainingAds, maxAds, addEarning, submitWithdraw } = useBalance();
   const [showWithdraw, setShowWithdraw] = useState(false);
 
-  // الرابط المباشر الجديد (Direct Link)
+  // الرابط المباشر (Direct Link)
   const AD_URL = "https://omg10.com/4/10942560";
 
-  // دالة التعامل مع الإعلانات - إجبارية وفورية
+  // دالة التعامل مع الإعلانات - فتح في نافذة جديدة وإضافة الرصيد
   function handleAdComplete(amount: number) {
-    // 1. فتح الإعلان فوراً في نافذة جديدة
+    // 1. محاولة فتح الإعلان في تاب جديد برمجياً
     const adWindow = window.open(AD_URL, '_blank', 'noopener,noreferrer');
     
-    // 2. لو المتصفح منع النافذة، نحول المستخدم في نفس الصفحة لضمان الربح
-    if (!adWindow) {
-      window.location.href = AD_URL;
+    // 2. كود احتياطي في حال منع المتصفح النافذة المنبثقة لضمان الفتح في تاب جديد
+    if (!adWindow || adWindow.closed || typeof adWindow.closed === 'undefined') {
+      const link = document.createElement('a');
+      link.href = AD_URL;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
-    // 3. إضافة الجنيه للرصيد فوراً
+    // 3. إضافة الجنيه للرصيد في الصفحة الحالية فوراً
     addEarning(amount);
   }
 
@@ -54,6 +60,12 @@ export default function Index({ userName, onLogout }: IndexProps) {
           backgroundPosition: 'center',
         }}
       />
+
+      {/* توهج خلفية جمالي */}
+      <div className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none opacity-10"
+        style={{ background: 'radial-gradient(circle, #ffcc00 0%, transparent 70%)', transform: 'translate(30%, -30%)' }} />
+      <div className="absolute bottom-0 left-0 w-96 h-96 rounded-full pointer-events-none opacity-10"
+        style={{ background: 'radial-gradient(circle, #00d2ff 0%, transparent 70%)', transform: 'translate(-30%, 30%)' }} />
 
       <div className="relative z-10 max-w-lg mx-auto px-4">
         <AppHeader userName={userName} onLogout={onLogout} />
