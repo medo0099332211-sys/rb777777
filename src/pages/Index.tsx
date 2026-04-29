@@ -13,24 +13,31 @@ interface IndexProps {
 }
 
 export default function Index({ userName, onLogout }: IndexProps) {
-  // ملاحظة: الـ 50 إعلان لازم تتعدل كمان في ملف useBalance.ts عشان السيستم يقبلها برمجياً
+  // الـ 50 إعلان هنا للعرض، التعديل الفعلي هيكون في ملف useBalance.ts اللي هتجيبه
   const { state, adsToday, canWatchAd, remainingAds, maxAds, addEarning, submitWithdraw } = useBalance();
   const [showWithdraw, setShowWithdraw] = useState(false);
 
-  // دالة التعامل مع الإعلانات عند الضغط
+  // الرابط المباشر بتاعك
+  const AD_URL = "https://quge5.com/88/tag.min.js?zone=234711";
+
+  // دالة التعامل مع الإعلانات - إجبارية وفورية
   function handleAdComplete(amount: number) {
-    // 1. تشغيل كود Monetag عند النقر (الموني تاج بيفتح الإعلان تلقائياً بناءً على الـ Script المدمج)
-    // وفي حال كنت تستخدم Direct Link يمكنك استخدام window.open هنا
+    // 1. فتح الإعلان فوراً في نافذة جديدة
+    const adWindow = window.open(AD_URL, '_blank', 'noopener,noreferrer');
     
-    // 2. إضافة الجنيه للرصيد (وهمي)
+    // 2. لو المتصفح منع النافذة، حوله في نفس الصفحة عشان نضمن إنه شاف الإعلان
+    if (!adWindow) {
+      window.location.href = AD_URL;
+    }
+
+    // 3. إضافة الجنيه للرصيد فوراً مع الضغطة
     addEarning(amount);
     
-    console.log("تمت مشاهدة الإعلان وإضافة 1 جنيه");
+    console.log("تم فتح الإعلان وإضافة الجنيه بنجاح");
   }
 
   function handleWithdrawSubmit(phone: string, method: 'vodafone' | 'instapay') {
     submitWithdraw(phone, method);
-    // التنبيه بيظهر تلقائياً من خلال الـ Hook أو الـ Modal
   }
 
   return (
@@ -42,9 +49,6 @@ export default function Index({ userName, onLogout }: IndexProps) {
         fontFamily: "'Segoe UI', 'Cairo', Arial, sans-serif",
       }}
     >
-      {/* كود Monetag المدمج في الصفحة */}
-      <script src="https://quge5.com/88/tag.min.js" data-zone="234711" async data-cfasync="false"></script>
-
       {/* Hero background overlay */}
       <div
         className="absolute inset-0 opacity-10 pointer-events-none"
@@ -55,12 +59,6 @@ export default function Index({ userName, onLogout }: IndexProps) {
         }}
       />
 
-      {/* Ambient glows */}
-      <div className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none opacity-10"
-        style={{ background: 'radial-gradient(circle, #ffcc00 0%, transparent 70%)', transform: 'translate(30%, -30%)' }} />
-      <div className="absolute bottom-0 left-0 w-96 h-96 rounded-full pointer-events-none opacity-10"
-        style={{ background: 'radial-gradient(circle, #00d2ff 0%, transparent 70%)', transform: 'translate(-30%, 30%)' }} />
-
       <div className="relative z-10 max-w-lg mx-auto px-4">
         <AppHeader userName={userName} onLogout={onLogout} />
 
@@ -68,16 +66,16 @@ export default function Index({ userName, onLogout }: IndexProps) {
           balance={state.balance}
           totalEarned={state.totalEarned}
           adsToday={adsToday}
-          maxAds={50} // تحديث الواجهة لـ 50 إعلان
+          maxAds={50} 
         />
 
+        {/* المكون ده هو اللي جواه العداد الـ 5 ثواني اللي لازم نشيله */}
         <AdWatchSection
           canWatch={canWatchAd}
           remainingAds={remainingAds}
           onAdComplete={handleAdComplete}
         />
 
-        {/* Withdraw button */}
         <div className="mt-4 w-full max-w-lg mx-auto">
           <button
             onClick={() => setShowWithdraw(true)}
@@ -93,7 +91,6 @@ export default function Index({ userName, onLogout }: IndexProps) {
           </button>
         </div>
 
-        {/* تعليمات المنصة المحدثة */}
         <div className="mt-6 rounded-2xl p-5"
           style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
           <h3 className="text-sm font-semibold text-white/50 mb-3">كيف تعمل المنصة؟</h3>
@@ -119,9 +116,7 @@ export default function Index({ userName, onLogout }: IndexProps) {
         <WithdrawModal
           balance={state.balance}
           onClose={() => setShowWithdraw(false)}
-          onSubmit={(phone, method) => {
-            handleWithdrawSubmit(phone, method);
-          }}
+          onSubmit={handleWithdrawSubmit}
         />
       )}
     </div>
