@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useBalance } from '@/hooks/useBalance';
 import AppHeader from '@/components/layout/AppHeader';
 import BalanceCard from '@/components/features/BalanceCard';
@@ -13,15 +13,24 @@ interface IndexProps {
 }
 
 export default function Index({ userName, onLogout }: IndexProps) {
+  // ملاحظة: الـ 50 إعلان لازم تتعدل كمان في ملف useBalance.ts عشان السيستم يقبلها برمجياً
   const { state, adsToday, canWatchAd, remainingAds, maxAds, addEarning, submitWithdraw } = useBalance();
   const [showWithdraw, setShowWithdraw] = useState(false);
 
+  // دالة التعامل مع الإعلانات عند الضغط
   function handleAdComplete(amount: number) {
+    // 1. تشغيل كود Monetag عند النقر (الموني تاج بيفتح الإعلان تلقائياً بناءً على الـ Script المدمج)
+    // وفي حال كنت تستخدم Direct Link يمكنك استخدام window.open هنا
+    
+    // 2. إضافة الجنيه للرصيد (وهمي)
     addEarning(amount);
+    
+    console.log("تمت مشاهدة الإعلان وإضافة 1 جنيه");
   }
 
   function handleWithdrawSubmit(phone: string, method: 'vodafone' | 'instapay') {
     submitWithdraw(phone, method);
+    // التنبيه بيظهر تلقائياً من خلال الـ Hook أو الـ Modal
   }
 
   return (
@@ -33,6 +42,9 @@ export default function Index({ userName, onLogout }: IndexProps) {
         fontFamily: "'Segoe UI', 'Cairo', Arial, sans-serif",
       }}
     >
+      {/* كود Monetag المدمج في الصفحة */}
+      <script src="https://quge5.com/88/tag.min.js" data-zone="234711" async data-cfasync="false"></script>
+
       {/* Hero background overlay */}
       <div
         className="absolute inset-0 opacity-10 pointer-events-none"
@@ -56,7 +68,7 @@ export default function Index({ userName, onLogout }: IndexProps) {
           balance={state.balance}
           totalEarned={state.totalEarned}
           adsToday={adsToday}
-          maxAds={maxAds}
+          maxAds={50} // تحديث الواجهة لـ 50 إعلان
         />
 
         <AdWatchSection
@@ -81,16 +93,16 @@ export default function Index({ userName, onLogout }: IndexProps) {
           </button>
         </div>
 
-        {/* How it works */}
+        {/* تعليمات المنصة المحدثة */}
         <div className="mt-6 rounded-2xl p-5"
           style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
           <h3 className="text-sm font-semibold text-white/50 mb-3">كيف تعمل المنصة؟</h3>
           <div className="flex flex-col gap-2">
             {[
               { icon: '📺', text: 'شاهد إعلانًا واكسب 1 جنيه لكل مشاهدة' },
-              { icon: '🔄', text: 'يمكنك مشاهدة حتى 20 إعلانًا يوميًا' },
+              { icon: '🔄', text: 'يمكنك مشاهدة حتى 50 إعلانًا يوميًا' },
               { icon: '💰', text: 'اجمع 100 جنيه واطلب السحب' },
-              { icon: '📱', text: 'استلم أموالك عبر فودافون كاش أو إنستا باي' },
+              { icon: '📱', text: 'استلم أموالك عبر فودافون كاش أو إنستا باي خلال 1-3 أيام' },
             ].map((item, i) => (
               <div key={i} className="flex items-center gap-3 text-sm text-white/40">
                 <span className="text-base">{item.icon}</span>
