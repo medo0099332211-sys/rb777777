@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 243 60% 11%;
+    --foreground: 0 0% 98%;
+
+    --card: 243 40% 15%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 243 40% 12%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 45 100% 50%;
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 243 30% 20%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 243 30% 18%;
+    --muted-foreground: 240 10% 55%;
+
+    --accent: 192 100% 50%;
+    --accent-foreground: 0 0% 0%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 243 25% 22%;
+    --input: 243 25% 22%;
+    --ring: 45 100% 50%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 243 50% 10%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 45 100% 50%;
+    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-accent: 243 30% 18%;
+    --sidebar-accent-foreground: 0 0% 90%;
+    --sidebar-border: 243 25% 20%;
+    --sidebar-ring: 45 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Cairo', 'Segoe UI', Arial, sans-serif;
+    direction: rtl;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 204, 0, 0.3) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: rgba(255, 204, 0, 0.3);
+    border-radius: 2px;
+  }
+}
