@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { Play, CheckCircle, Lock, Zap } from 'lucide-react';
 
 interface AdWatchSectionProps {
@@ -7,52 +7,23 @@ interface AdWatchSectionProps {
   onAdComplete: (amount: number) => void;
 }
 
-type AdState = 'idle' | 'loading' | 'playing' | 'complete';
-
-const AD_DURATION = 5; // seconds
+type AdState = 'idle' | 'complete';
 
 export default function AdWatchSection({ canWatch, remainingAds, onAdComplete }: AdWatchSectionProps) {
   const [adState, setAdState] = useState<AdState>('idle');
-  const [countdown, setCountdown] = useState(AD_DURATION);
-  const [progress, setProgress] = useState(0);
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, []);
 
   function startAd() {
     if (!canWatch || adState !== 'idle') return;
-    console.log('Starting ad watch...');
-    setAdState('loading');
-    setCountdown(AD_DURATION);
-    setProgress(0);
 
-    // Simulate ad loading
+    // 1. تنفيذ إضافة الجنيه وفتح الإعلان فوراً (الموجودين في Index.tsx)
+    onAdComplete(1);
+
+    // 2. إظهار علامة النجاح لثانية واحدة فقط لإعطاء انطباع بالربح
+    setAdState('complete');
+    
     setTimeout(() => {
-      setAdState('playing');
-      let elapsed = 0;
-      intervalRef.current = setInterval(() => {
-        elapsed += 0.1;
-        const pct = (elapsed / AD_DURATION) * 100;
-        setProgress(Math.min(pct, 100));
-        setCountdown(Math.max(0, Math.ceil(AD_DURATION - elapsed)));
-
-        if (elapsed >= AD_DURATION) {
-          clearInterval(intervalRef.current!);
-          setAdState('complete');
-          onAdComplete(1);
-          console.log('Ad completed, earned 1 EGP');
-          setTimeout(() => {
-            setAdState('idle');
-            setProgress(0);
-            setCountdown(AD_DURATION);
-          }, 2000);
-        }
-      }, 100);
-    }, 800);
+      setAdState('idle');
+    }, 1500);
   }
 
   return (
@@ -75,8 +46,6 @@ export default function AdWatchSection({ canWatch, remainingAds, onAdComplete }:
               ? 'rgba(255,255,255,0.05)'
               : adState === 'complete'
               ? 'linear-gradient(135deg, #22c55e, #16a34a)'
-              : adState !== 'idle'
-              ? 'linear-gradient(135deg, rgba(255,204,0,0.3), rgba(255,140,0,0.2))'
               : 'linear-gradient(135deg, #ffcc00, #ff8c00)',
             boxShadow: canWatch && adState === 'idle' ? '0 0 30px rgba(255,204,0,0.4), 0 8px 32px rgba(255,140,0,0.3)' : 'none',
           }}
@@ -106,33 +75,10 @@ export default function AdWatchSection({ canWatch, remainingAds, onAdComplete }:
               </>
             )}
 
-            {adState === 'loading' && (
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 rounded-full border-2 border-yellow-400/30 border-t-yellow-400 animate-spin" />
-                <span className="text-yellow-400 font-medium">جاري تحميل الإعلان...</span>
-              </div>
-            )}
-
-            {adState === 'playing' && (
-              <div className="flex flex-col items-center w-full gap-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                  <span className="text-yellow-400 font-medium text-sm">يتم تشغيل الإعلان...</span>
-                  <span className="text-white/60 text-sm">{countdown} ثانية</span>
-                </div>
-                <div className="w-full h-2 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,0.15)' }}>
-                  <div
-                    className="h-full rounded-full transition-all duration-100"
-                    style={{ width: `${progress}%`, background: 'linear-gradient(90deg, #ffcc00, #ff8c00)' }}
-                  />
-                </div>
-              </div>
-            )}
-
             {adState === 'complete' && (
               <div className="flex items-center gap-3">
                 <CheckCircle className="w-6 h-6 text-white" />
-                <span className="text-white font-bold text-lg">تم! +1 جنيه 🎉</span>
+                <span className="text-white font-bold text-lg">تم فتح الإعلان بنجاح 🎉</span>
               </div>
             )}
 
