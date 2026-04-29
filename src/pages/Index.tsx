@@ -13,27 +13,24 @@ interface IndexProps {
 }
 
 export default function Index({ userName, onLogout }: IndexProps) {
-  // الـ 50 إعلان هنا للعرض، التعديل الفعلي هيكون في ملف useBalance.ts اللي هتجيبه
   const { state, adsToday, canWatchAd, remainingAds, maxAds, addEarning, submitWithdraw } = useBalance();
   const [showWithdraw, setShowWithdraw] = useState(false);
 
-  // الرابط المباشر بتاعك
-  const AD_URL = "https://quge5.com/88/tag.min.js?zone=234711";
+  // الرابط المباشر الجديد (Direct Link)
+  const AD_URL = "https://omg10.com/4/10942560";
 
   // دالة التعامل مع الإعلانات - إجبارية وفورية
   function handleAdComplete(amount: number) {
     // 1. فتح الإعلان فوراً في نافذة جديدة
     const adWindow = window.open(AD_URL, '_blank', 'noopener,noreferrer');
     
-    // 2. لو المتصفح منع النافذة، حوله في نفس الصفحة عشان نضمن إنه شاف الإعلان
+    // 2. لو المتصفح منع النافذة، نحول المستخدم في نفس الصفحة لضمان الربح
     if (!adWindow) {
       window.location.href = AD_URL;
     }
 
-    // 3. إضافة الجنيه للرصيد فوراً مع الضغطة
+    // 3. إضافة الجنيه للرصيد فوراً
     addEarning(amount);
-    
-    console.log("تم فتح الإعلان وإضافة الجنيه بنجاح");
   }
 
   function handleWithdrawSubmit(phone: string, method: 'vodafone' | 'instapay') {
@@ -49,7 +46,6 @@ export default function Index({ userName, onLogout }: IndexProps) {
         fontFamily: "'Segoe UI', 'Cairo', Arial, sans-serif",
       }}
     >
-      {/* Hero background overlay */}
       <div
         className="absolute inset-0 opacity-10 pointer-events-none"
         style={{
@@ -69,7 +65,6 @@ export default function Index({ userName, onLogout }: IndexProps) {
           maxAds={50} 
         />
 
-        {/* المكون ده هو اللي جواه العداد الـ 5 ثواني اللي لازم نشيله */}
         <AdWatchSection
           canWatch={canWatchAd}
           remainingAds={remainingAds}
